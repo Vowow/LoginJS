@@ -4,15 +4,18 @@ level = require 'level'
 module.exports = (db="#{__dirname}../db") ->
   db = level db if typeof db is 'string'
   close: (callback) ->
+    console.log
     db.close callback
   users:
     get: (username, callback) ->
       user = {}
       db.createReadStream
-        gt: "users:#{username}:"
+        get: "users:#{username}:"
+        get: "users_by_email:#{email}"
       .on 'data', (data) ->
-        [_, username, key] = data.key.split ':'
+        [_, username,email, key] = data.key.split ':'
         user.username ?= username
+        user.email ?= email
         user[key] = data.value
       .on 'error', (err) ->
         callback err

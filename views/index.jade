@@ -1,4 +1,4 @@
-doctype html    
+doctype html
 html
   head
     meta(charset='utf-8')
@@ -11,9 +11,10 @@ html
     script(type='text/javascript', src='vendors/jquery-1.11.1.min.js')
     script(type='text/javascript', src='vendors/bootstrap/js/bootstrap.min.js')
     script
-      :coffee 
+      :coffee
         $().ready ->
           console.log 'ready'
+          $(".jumbotron").hide();
           $('#login').submit (e) ->
             # TODO: validation
             user =
@@ -23,28 +24,26 @@ html
             e.preventDefault()
             $.post "/user/login", user, (data) ->
               console.log 'data', data
+              if data.username is user.username
+                $("#login").hide();
+                $(".jumbotron").show();
             , 'json'
+
   body
-    
+  include header.jade
+  .container
     form#login(action="/login", method="post", role="form")
-      table
-        tr.form-group
-          th
-            label(for="login-username") Username
-          td
-            input#login-username.form-control(type='text', name="username")
-        tr.form-group
-          th
-            label(for="login-password") Password
-          td
-            input#login-password.form-control(type='password', name="password")
-        tr.form-group
-          th
-          td
-            //- button.btn.btn-primary(type='button') Login
-            //- button.btn.btn-default(type='button') Signin
-            input.btn.btn-primary(type='submit', value="Login")
-            input.btn.btn-default(type='submit', value="Signin")
+     h2.form-signin-heading Please sign in
+     input.input-block-level.form-control(id="login-username",type="text", name="username", placeholder="Username", required, pattern="[A-Za-z]{3,32}")
+     br
+     input.input-block-level.form-control(id="login-password",type="password", name="password", placeholder="Password", required, pattern="{3}")
+     br
+     button.btn.btn-lg.btn-primary.btn-block(type="submit") Sign in
 
-  
-
+div.container
+  div.jumbotron(style="display:none")
+   h1 Hello #{username}!
+     p Welcome, to our application
+     br
+     a.btn.btn-primary(href="/logout") Logout
+include footer.jade
