@@ -14,6 +14,10 @@ serve_favicon = require 'serve-favicon'
 serve_index = require 'serve-index'
 serve_static = require 'serve-static'
 # config = require '../conf/hdfs'
+db = require '../lib/db'
+level = require 'level'
+
+
 
 app = express()
 
@@ -43,13 +47,28 @@ app.use serve_static "#{__dirname}/../public"
 app.get '/', (req, res, next) ->
   res.render 'index', title: 'Express'
 
-app.post '/user/login', (req, res, next) ->
 
-  res.json
-    username: 'wdavidw'
+app.post '/user/login', (req, res, next) ->
+  db.close
+  
+ 
+  users = module.exports
+  users.set 'wdavid',
     lastname: 'Worms'
-    Firstname: 'David'
+    firstname: 'David'
     email: 'david@adaltas.com'
+  , (err) ->
+    return next(err)
+
+  console.log "USER: " + req.body.username + " PASS: " + req.body.password
+
+  test = users.get 'wdavid'
+  , (err) ->
+    return next(err)
+
+  console.log "READ : " + test.username
+
+
 
 app.use serve_index "#{__dirname}/../public"
 if process.env.NODE_ENV is 'development'
