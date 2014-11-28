@@ -15,8 +15,6 @@ serve_index = require 'serve-index'
 serve_static = require 'serve-static'
 # config = require '../conf/hdfs'
 db = require '../lib/db'
-level = require 'level'
-
 
 
 app = express()
@@ -44,29 +42,31 @@ app.use stylus.middleware
     .use nib()
 app.use serve_static "#{__dirname}/../public"
 
+
+
+
+
 app.get '/', (req, res, next) ->
   res.render 'index', title: 'Express'
 
-
+test = db "./NEWdb"
 app.post '/user/login', (req, res, next) ->
-  db.close
   
- 
-  users = module.exports
-  users.set 'wdavid',
-    lastname: 'Worms'
-    firstname: 'David'
-    email: 'david@adaltas.com'
+  
+  
+  
+  test.users.set "Martin",
+    lastname: "Worms"
+    firstname: "David"
+    email: "david@adaltas.com"
   , (err) ->
-    return next(err)
-
+    return next err if err
+  
   console.log "USER: " + req.body.username + " PASS: " + req.body.password
 
-  test = users.get 'wdavid'
-  , (err) ->
-    return next(err)
-
-  console.log "READ : " + test.username
+  toto = test.users.get 'wdavid',(err, user) ->
+    return next err if err
+    console.log "READ : " + " USERNAME " + user.username 
 
 
 
