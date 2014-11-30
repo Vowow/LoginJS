@@ -24,25 +24,39 @@ html
             e.preventDefault()
             $.post "/user/login", user, (data) ->
               console.log 'data', data
-              if data.username is user.username
+              if data.username is user.username and data.password is user.password or data.email is user.username and data.password is user.password 
                 $("#login").hide();
                 $(".jumbotron").show();
+                $(".alert").hide();
+              else
+                $(".alert").show();
+
+
             , 'json'
 
   body
   include header.jade
+  div.container
+  div.alert.alert-danger(style="display:none")
+    a.close(href='#', data-dismiss='alert')
+    strong Warning!
+    | Le couple email/mot de passe ou usename/mot de passe est incorrecte
+
   .container
     form#login(action="/login", method="post", role="form")
      h2.form-signin-heading Please sign in
-     input.input-block-level.form-control(id="login-username",type="text", name="username", placeholder="Username", required, pattern="[A-Za-z]{3,32}")
+     input.input-block-level.form-control(id="login-username",type="text", name="username", placeholder="Username", required, pattern="{3,32}")
      br
      input.input-block-level.form-control(id="login-password",type="password", name="password", placeholder="Password", required, pattern="{3}")
      br
      button.btn.btn-lg.btn-primary.btn-block(type="submit") Sign in
 
+
+
+
 div.container
   div.jumbotron(style="display:none")
-   h1 Hello #{username}!
+   h1 Hello !
      p Welcome, to our application
      br
      a.btn.btn-primary(href="/logout") Logout

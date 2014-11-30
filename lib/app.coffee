@@ -49,24 +49,26 @@ app.use serve_static "#{__dirname}/../public"
 app.get '/', (req, res, next) ->
   res.render 'index', title: 'Express'
 
-test = db "./NEWdb"
+test = db "./NEWdb", { valueEncoding: 'json' }
 app.post '/user/login', (req, res, next) ->
   
-  
-  
-  
-  test.users.set "Martin",
-    lastname: "Worms"
-    firstname: "David"
-    email: "david@adaltas.com"
+  test.users.set "admin",
+    lastname: "MASSON"
+    firstname: "LEGRIS"
+    email: "legmas@ece.fr"
+    password: "password"
   , (err) ->
     return next err if err
   
   console.log "USER: " + req.body.username + " PASS: " + req.body.password
 
-  toto = test.users.get 'wdavid',(err, user) ->
+  toto = test.users.get 'admin',(err, user) ->
     return next err if err
-    console.log "READ : " + " USERNAME " + user.username 
+    console.log "READ : " + " USERNAME " + user.username + " LAST : " + user[0]
+    res.json 
+      username: user.username
+      email: user.email
+      password: user.password
 
 
 

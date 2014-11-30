@@ -39,7 +39,8 @@
   },
   "devDependencies": {
     "should": "latest",
-    "mocha": "latest"
+    "mocha": "latest",
+    "should": ">= 0.0.1"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers coffee:coffee-script/register tests"
