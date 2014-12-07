@@ -13,9 +13,14 @@ coffee = require 'connect-coffee-script'
 serve_favicon = require 'serve-favicon'
 serve_index = require 'serve-index'
 serve_static = require 'serve-static'
-# config = require '../conf/hdfs'
-db = require '../lib/db'
+csv = require 'csv'
+fs = require 'fs'
 
+db = require '../lib/db'
+parse = require 'csv-parse'
+importCSV = require '../lib/import'
+exportCSV = require '../lib/export'
+global.mydb = db "./DB", { valueEncoding: 'json' }
 
 app = express()
 
@@ -42,39 +47,70 @@ app.use stylus.middleware
     .use nib()
 app.use serve_static "#{__dirname}/../public"
 
-
-
-
-
 app.get '/', (req, res, next) ->
+  #import de la database en arrivant sur l'index
+  impdb = importCSV mydb
+  impdb.importUser()
   res.render 'index', title: 'Express'
 
-test = db "./NEWdb", { valueEncoding: 'json' }
-app.post '/user/login', (req, res, next) ->
+app.post '/login', (req, res, next) ->
   
-  test.users.set "admin",
-    lastname: "MASSON"
-    firstname: "LEGRIS"
-    email: "legmas@ece.fr"
-    password: "password"
-  , (err) ->
-    return next err if err
-  
-  console.log "USER: " + req.body.username + " PASS: " + req.body.password
+  mydb.emails.get req.body.username,(email) ->
+      if email.emailname is req.body.username
+        mydb.users.get email.username
+        , (user) ->
+          if user.password is req.body.password
+            res.json
+              username: user.username
+              password: user.password
+          else
+            res.json
+              login: "failed"
+      else
+        mydb.users.get req.body.username, (user) ->
+          if user.username is req.body.username and user.password is req.body.password
+            res.json
+              username: user.username
+              password: user.password
+          else
+            res.json
+              login: "failed"
 
-  toto = test.users.get 'admin',(err, user) ->
-    return next err if err
-    console.log "READ : " + " USERNAME " + user.username + " LAST : " + user[0]
-    res.json 
-      username: user.username
-      email: user.email
-      password: user.password
+app.post '/export', (req, res, next) ->
+  #test
+  mesUsers = [
+    [
+      "admin"
+      "MASSON"
+      "LEGRIS"
+      "legmas@ece.fr"
+      "password"
+    ]
+    [
+      "user"
+      "user1"
+      "pedro"
+      "pedro@ece.fr"
+      "password"
+    ]
+  ]
+  #import de la database en arrivant sur l'index
+    #impdb = importCSV mydb
+    #impdb.importUser()
 
+  #export de la BDD
+  #csvout = exportCSV mesUsers
+
+  csvout = exportCSV mydb.users.getEverybody()
+  console.log "export csv " + csvout
+  csvout.exportUser 
+    
 
 
 app.use serve_index "#{__dirname}/../public"
 if process.env.NODE_ENV is 'development'
   app.use errorhandler()
+
 
 
 module.exports = app
