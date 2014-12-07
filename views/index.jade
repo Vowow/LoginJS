@@ -16,13 +16,12 @@ html
           console.log 'ready'
           $(".jumbotron").hide();
           $('#login').submit (e) ->
-            # TODO: validation
             user =
               username: $('#login-username').val()
               password: $('#login-password').val()
             console.log 'user', user
             e.preventDefault()
-            $.post "/user/login", user, (data) ->
+            $.post "/login", user, (data) ->
               console.log 'data', data
               if data.username is user.username and data.password is user.password or data.email is user.username and data.password is user.password 
                 $("#login").hide();
@@ -31,8 +30,11 @@ html
               else
                 $(".alert").show();
 
-
             , 'json'
+
+            $("exportCSV").click ->
+              $.post "/export"
+              console.log 'inside'
 
   body
   include header.jade
@@ -58,4 +60,7 @@ div.container
   div.jumbotron(style="display:none")
    h1 Hello !
      p Welcome, to our application
+     br
+    form#export(action="/export", method="post") 
+    button.btn.btn-lg.btn-primary(id="exportCSV" type="submit") Export BDD
 include footer.jade
