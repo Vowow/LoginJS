@@ -22,7 +22,7 @@ module.exports = (db="#{__dirname}../db") ->
 
     getEverybody: (callback) ->
       person = {}
-      list = []
+      listUsers = []
 
       db.createReadStream
         gt: ""
@@ -31,12 +31,12 @@ module.exports = (db="#{__dirname}../db") ->
         person.key = username
         person.value = data.value
         test = [username, data.value]
-        list.push test
+        listUsers.push test
         console.log "getTOUTELMONDE " + test
 
       .on 'end', ->
-        console.log "End of get getEverybody"
-        list
+        console.log "End of getEverybody"
+        callback listUsers
       .on 'error', (err) ->
         callback err if callback and typeof (callback) is "function"
 

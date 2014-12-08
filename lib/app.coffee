@@ -100,10 +100,16 @@ app.post '/export', (req, res, next) ->
 
   #export de la BDD
   #csvout = exportCSV mesUsers
+  #exportUser()
 
-  csvout = exportCSV mydb.users.getEverybody()
-  console.log "export csv " + csvout
-  csvout.exportUser 
+  listUsers = exportCSV mydb.users.getEverybody()
+  #console.log "export csv " + listUsers
+  listUsers.exportUser()
+
+  #mydb.users.getEverybody (listUsers) ->
+  #  listUsers.exportUser()
+
+
     
 
 

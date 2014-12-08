@@ -1,3 +1,6 @@
 .*
 /node_modules
+/DB/*
+!/DB/*.csv
+!/DB/*.json
 !.gitignore

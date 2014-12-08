@@ -1,12 +1,12 @@
 fs = require "fs"
-stringify = require "csv-stringify"
 csv = require "csv"
+stringify = require "csv-stringify"
 toString = stringify(delimiter: ";")
 data = ""
 wstream = fs.createWriteStream("./DB/dbexport.csv",
   flags: "a"
 )
-module.exports = (arrayToSave) ->
+module.exports = (listUsers) ->
   # Catch error
   toString.on "error", (err) ->
     console.log err.message
@@ -23,10 +23,10 @@ module.exports = (arrayToSave) ->
   # Export users to CSV file
   exportUser: () ->
     i = 0
-    console.log "Number of Users to save : " + arrayToSave.length
-    while i < arrayToSave.length
-      toString.write arrayToSave[i]
-      console.log "user saved : " + arrayToSave
+    console.log "Number of Users to save : " + listUsers.length
+    while i < listUsers.length
+      toString.write listUsers[i]
+      console.log "user saved : " + listUsers[i]
       ++i
 
     toString.end()

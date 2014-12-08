@@ -14,7 +14,7 @@
     "timeseries",
     "database"
   ],
-  "author": "David Worms",
+  "author": "Martin LEGRIS, Sacha MASSON",
   "license": "MIT",
   "dependencies": {
     "body-parser": "~1.0.0",
