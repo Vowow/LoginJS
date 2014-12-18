@@ -42,6 +42,7 @@ module.exports = (db="#{__dirname}../db") ->
 
  
     set: (username, user, callback) ->
+      console.log "SET"
       ops = for k, v of user
         continue if k is 'username'
         type: 'put'
@@ -64,10 +65,13 @@ module.exports = (db="#{__dirname}../db") ->
       .on 'error', (err) ->
         callback err if callback and typeof (callback) is "function"
       .on 'end', ->
-        callback 'end!'
+        callback 'endOfGet'
     set: (emailname, users_by_email, callback) ->
+      console.log "SET"
       ops = for k, v of users_by_email
         continue if k is 'emailname'
         type: 'put'
         key: "users_by_email:#{emailname}:#{k}"
         value: v
+      db.batch ops, (err) ->
+        callback err if callback and typeof (callback) is "function"
