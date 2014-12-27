@@ -13,7 +13,7 @@ objectCounter = 0
 
 module.exports = (arrayToSave, format) ->
   myformat = format if format
-  # If format is json, export to json file
+  # on cherche a connaitre le format afin d'exporter en json ou CSV
   if myformat is "json"
     wstream = fs.createWriteStream("./DB/dbexport.json",
       flags: "w"
@@ -26,33 +26,24 @@ module.exports = (arrayToSave, format) ->
         console.log "Found "+ objectCounter+ " objects."
 
   else
-    # else format export to csv file (default format)
     wstream = fs.createWriteStream("./DB/dbexport.csv",
       flags: "w"
     )
 
-    # Catch error stringifier
+    # on récupere les erreur sur le stringify
     stringifier.on "error", (err) ->
       console.log err.message
       return
 
-    # Adding data during readable
+    # on push les donné dans le fichier
     stringifier.on "readable", ->
       data += row  while row = stringifier.read()
       return
 
-    #stringifier.on "writable", (err) ->
-    #  data += row  while row = stringifier.read()
-    #  return
-
-    # Write on csv file at the end
     stringifier.on "finish", ->
-      #console.log "end:" + data
       wstream.write data
       return
 
-
-  # Do pipe, export user function
   exportUser: () ->
     if myformat is "json"
       myJSON = JSON.stringify({users: arrayToSave})

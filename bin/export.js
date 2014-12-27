@@ -17,12 +17,13 @@ else if (argv.format == "csv") {
 
     i = 0;
     j = parseInt(outputBdd.length / 4);
+    //On cherche le nombre d'utilisateur
     max = outputBdd.length - j;
     m=0
     while (m<outputBdd.length){
       m++;
     }
-    while (i < max) {
+    while (i < max) {// On va push chaque utilisateur dans le fichier
       username = outputBdd[0][0];
       lastname = outputBdd[1][1];
       firstname = outputBdd[2][1];
@@ -32,9 +33,9 @@ else if (argv.format == "csv") {
 
       i = i + 4
     }
-    expt = myexport(output, "csv");
+    tmp = myexport(output, "csv"); // L'export se fait en CSV
     console.log("L'export a été réalisé avec succès\nLa base de donnée est dans le dossier DB");
-    return expt.exportUser(output);
+    return tmpœ.exportUser(output);
 
   });
 }
@@ -68,9 +69,9 @@ else if (argv.format == "json") {
 
       i = i + 4
     }
-    expt = myexport(output, "json");
+    tmp = myexport(output, "json");
     console.log("L'export a été réalisé avec succès\nLa base de donnée est dans le dossier DB");
-    return expt.exportUser(output);
+    return tmp.exportUser(output);
 
   });
 }

@@ -75,11 +75,6 @@ app.use serve_static "#{__dirname}/../public"
 app.get '/', (req, res, next) ->
   console.log req.session.username
   if req.session.username
-    for socket, i in sock
-      socket.emit 'login',
-        username: req.session.username
-        crdate: Date.now()
-        count: req.session.count
   else
     imt = importCSV mydb
     imt.importUser()

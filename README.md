@@ -3,16 +3,16 @@
 
 ## How to start
 
-Clone this repo
-npm install (you need to install all dependencies)
-node bin/start
-Import or not the database : node bin/import --help
-url : http://127.0.0.1:1337/
+* Clone this repo
+* npm install (you need to install all dependencies)
+* node bin/start
+* Import or not the database : node bin/import --help
+* url : http://127.0.0.1:1337/
 
 ## How to connect
-user : admin  
-pass : password
-email : legmas@ece.fr
+* user : admin  
+* pass : password
+* email : legmas@ece.fr
 
 #### Contributors
 *   Martin LEGRIS legris@ece.fr
@@ -25,3 +25,10 @@ email : legmas@ece.fr
 * Sign in form with user/pass or email/pass
 * Sign up form
 * Import / Export (csv + json)
+* Bootstrap integration
+* JADE + coffeescript only
+
+## Missing functionalities
+
+* Socket.io
+* Improving unit test

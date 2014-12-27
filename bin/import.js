@@ -16,7 +16,6 @@ global.mydb = db("./DB", {
 format = "csv";
 impdb = importCSV(mydb, format);
 impdb.importUser();
-//mydb.close();
 }
 else if (argv.format == "json") {
   var importCSV, impdb, db, format;
@@ -28,7 +27,6 @@ else if (argv.format == "json") {
   format = "json";
   impdb = importCSV(mydb, format);
   impdb.importUser();
-  //mydb.close();
 }
 else {
 	console.log("Erreur : veuillez indiquer un format valide, consulter l'aide (--help)")

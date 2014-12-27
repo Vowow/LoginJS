@@ -11,24 +11,20 @@ format =""
 module.exports = (newUser, format) ->
   mydb = newUser
   myformat = format if format
-  # catch erros
-  # read file
+
   source.on "error", ->
     console.log "ERROR :" + error.message
-  #password
   parser.on "error", ->
       console.log "ERROR :" + error.message
 
-  # Save a user in output during readable action
+
   parser.on "readable", ->
     output.push record  while record = parser.read()
 
-  # Function get stream if it is json format
   getStream = ->
     parserJson = JSONStream.parse("*")
     stream.pipe parserJson
 
-  # Save one user in database
   WriteDataBase = (myuser) ->
         mydb.users.set myuser[0],
           password: myuser[4]
@@ -44,7 +40,6 @@ module.exports = (newUser, format) ->
         mydb.users.get myuser[0]
         , (user) ->
 
-  # Save users in databe
   parser.on "finish", ->
     i = 0
     while i < output.length
