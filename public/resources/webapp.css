@@ -46,6 +46,33 @@ body {
 .form-signin .checkbox {
   margin-bottom: 10px;
 }
+.form-signupForm {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signupForm .checkbox {
+  font-weight: normal;
+}
+.form-signupForm .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signupForm .form-control:focus {
+  z-index: 2;
+}
+.form-signupForm input[type="password"] {
+  margin-bottom: 10px;
+}
+.form-signupForm .form-signupForm-heading,
+.form-signupForm .checkbox {
+  margin-bottom: 10px;
+}
 #wrap {
   min-height: 100%;
   height: auto !important;

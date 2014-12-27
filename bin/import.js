@@ -7,18 +7,28 @@ if (argv.help) {
   	+ "exemple : node bin/start --format csv\n" + "ceci va importer dans la base de donner un fichier csv");
 }
 else if (argv.format == "csv") {
-var importCSV, impdb, db;
+var importCSV, impdb, db, format;
 importCSV = require('../lib/import');
 db = require('../lib/db');
 global.mydb = db("./DB", {
   valueEncoding: 'json'
 });
-impdb = importCSV(mydb);
+format = "csv";
+impdb = importCSV(mydb, format);
 impdb.importUser();
 //mydb.close();
 }
 else if (argv.format == "json") {
-	console.log("json")
+  var importCSV, impdb, db, format;
+  importCSV = require('../lib/import');
+  db = require('../lib/db');
+  global.mydb = db("./DB", {
+    valueEncoding: 'json'
+  });
+  format = "json";
+  impdb = importCSV(mydb, format);
+  impdb.importUser();
+  //mydb.close();
 }
 else {
 	console.log("Erreur : veuillez indiquer un format valide, consulter l'aide (--help)")

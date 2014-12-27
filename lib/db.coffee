@@ -13,14 +13,12 @@ module.exports = (db="#{__dirname}../db") ->
         [_, username, key] = data.key.split ':'
         user.username ?= username
         user[key] = data.value
-
       .on 'error', (err) ->
         callback err
       .on 'end', ->
-        if user.username is username
           callback user
 
-    getEverybody: (callback) ->
+    getAll: (callback) ->
       person = {}
       listUsers = []
 
@@ -32,15 +30,13 @@ module.exports = (db="#{__dirname}../db") ->
         person.value = data.value
         test = [username, data.value]
         listUsers.push test
-        console.log "getTOUTELMONDE " + test
 
       .on 'end', ->
-        console.log "End of getEverybody"
         callback listUsers
       .on 'error', (err) ->
         callback err if callback and typeof (callback) is "function"
 
- 
+
     set: (username, user, callback) ->
       console.log "SET"
       ops = for k, v of user
@@ -60,12 +56,10 @@ module.exports = (db="#{__dirname}../db") ->
         [_, emailname, key] = data.key.split ':'
         users_by_email.emailname ?= emailname
         users_by_email[key] = data.value
-        if users_by_email.emailname is emailname
-          callback users_by_email
       .on 'error', (err) ->
         callback err if callback and typeof (callback) is "function"
       .on 'end', ->
-        callback 'endOfGet'
+          callback users_by_email
     set: (emailname, users_by_email, callback) ->
       console.log "SET"
       ops = for k, v of users_by_email

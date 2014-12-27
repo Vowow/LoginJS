@@ -18,21 +18,20 @@ db = require '../lib/db'
 parse = require 'csv-parse'
 importCSV = require '../lib/import'
 exportCSV = require '../lib/export'
-global.mydb = db 
+mydb = db './DB'
 
 
 app = express()
 server = http.Server(app)
 io = require("socket.io")(server)
-app.listen 1337
 
-sockets = []
+sock = []
 
 io.on 'connectinon', (socket) ->
   sockets.push socket
   socket.on 'login', (data) -> #ne servirait à rien
   console.log "data"
-  
+
 
 
 
@@ -51,7 +50,7 @@ app.use (req, res, next) ->
   req.session.count++
   req.session.history ?= []
   req.session.history.push req.urlencoded
-  for socket, i in sockets
+  for socket, i in sock
     console.log 'emit logs'
     socket.emit 'logs',
       username: req.session.username or 'anonymous'
@@ -74,71 +73,79 @@ app.use stylus.middleware
 app.use serve_static "#{__dirname}/../public"
 
 app.get '/', (req, res, next) ->
-  #import de la database en arrivant sur l'index
-  #impdb = importCSV mydb
-  #impdb.importUser()
-  res.render 'index', title: 'Express'
+  console.log req.session.username
+  if req.session.username
+    for socket, i in sock
+      socket.emit 'login',
+        username: req.session.username
+        crdate: Date.now()
+        count: req.session.count
+  else
+    imt = importCSV mydb
+    imt.importUser()
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.render 'index', {title: 'Express', username: req.session.username}
 
-app.get '/admin', (req, res, next) ->
-  res.render 'admin', title: 'Express'
-
-
-app.post '/login', (req, res, next) ->
-  for socket in sockets
-    socket.emit 'login', username: 'wdavid', crdate: Date.now()
-    console.log 'emit'
-
+app.post "/login", (req, res, next) ->
+  mySession = undefined
   mySession = req.session
   console.log "LOGIN"
-  mydb.emails.get req.body.username,(email) ->
+  mydb.emails.get req.body.username, (email) ->
+    console.log "EMAIL"
     if email.emailname is req.body.username
-      console.log "USERNAME EMAIL"
-      mydb.users.get email.username
-      , (user) ->
+      mydb.users.get email.username, (user) ->
+        console.log user.username
         if user.password is req.body.password
           session.username = req.body.username
           res.json
             username: user.username
             password: user.password
+            email: user.email
+
         else
           console.log "FAIL by email"
           res.json
-            login: "failed"
+            username: user.username
+            password: user.password
+
     else
       mydb.users.get req.body.username, (user) ->
-        console.log "USERNAME"
+        console.log "login par username"
         if user.username is req.body.username and user.password is req.body.password
-          session.username = req.body.username
+          req.session.username = req.body.username
           res.json
             username: user.username
             password: user.password
+
         else
           console.log "FAIL by name"
-          res.json
-            login: "failed"
-app.post '/signup', (req, res, next) ->
-  
-  mydb.emails.get req.body.username,(email) ->
+          res.json login: "failed"
 
-      if email.emailname is req.body.username
-        mydb.users.get email.username
-        , (user) ->
-          if user.password is req.body.password
-            res.json
-              username: user.username
-              password: user.password
-          else
-            res.json
-              login: "failed"
-      else
-        mydb.users.get req.body.username, (user) ->
-          if user.username is req.body.username and user.password is req.body.password
-            res.json
-              username: user.username
-              password: user.password
-          else
-            res.json
-              login: "failed"
+    return
+
+
+app.post '/signup', (req, res, next) ->
+  mydb.users.set req.body.username,
+    password: req.body.password
+    firstname: req.body.firstname
+    lastname: req.body.lastname
+  , (err) ->
+    mydb.emails.set req.body.email,
+    username: req.body.username
+  , (err) ->
+    mydb.emails.get req.body.email
+  , (email) ->
+    mydb.users.get req.body.username
+  , (user) ->
+
+  res.json
+    mode: 'signup'
+    username: req.session.username
+    password: req.session.password
+    email: req.session.email
+    firstname: req.session.firstname
+    res.redirect '/'
+
 app.post '/logout', (req, res, next) ->
   req.session.destroy()
   res.redirect '/'

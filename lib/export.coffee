@@ -1,33 +1,68 @@
 fs = require "fs"
-csv = require "csv"
 stringify = require "csv-stringify"
-toString = stringify(delimiter: ";")
+csv = require "csv"
+createSource = require "stream-json"
+
+stringifier = stringify(delimiter: ",")
 data = ""
-wstream = fs.createWriteStream("./DB/dbexport.csv",
-  flags: "a"
-)
-module.exports = (listUsers) ->
-  # Catch error
-  toString.on "error", (err) ->
-    console.log err.message
+myformat = "csv"
+myjson = ""
 
-  # add rows to data
-  toString.on "readable", ->
-    data += row  while row = toString.read()
+source = createSource()
+objectCounter = 0
 
-  # Find end of file and write
-  toString.on "finish", ->
-    console.log "end:" + data
-    wstream.write data
+module.exports = (arrayToSave, format) ->
+  myformat = format if format
+  # If format is json, export to json file
+  if myformat is "json"
+    wstream = fs.createWriteStream("./DB/dbexport.json",
+      flags: "w"
+    )
 
-  # Export users to CSV file
+    source.on "startObject", ->
+     ++objectCounter
+
+    source.on "end", ->
+        console.log "Found "+ objectCounter+ " objects."
+
+  else
+    # else format export to csv file (default format)
+    wstream = fs.createWriteStream("./DB/dbexport.csv",
+      flags: "w"
+    )
+
+    # Catch error stringifier
+    stringifier.on "error", (err) ->
+      console.log err.message
+      return
+
+    # Adding data during readable
+    stringifier.on "readable", ->
+      data += row  while row = stringifier.read()
+      return
+
+    #stringifier.on "writable", (err) ->
+    #  data += row  while row = stringifier.read()
+    #  return
+
+    # Write on csv file at the end
+    stringifier.on "finish", ->
+      #console.log "end:" + data
+      wstream.write data
+      return
+
+
+  # Do pipe, export user function
   exportUser: () ->
-    i = 0
-    console.log "Number of Users to save : " + listUsers.length
-    while i < listUsers.length
-      toString.write listUsers[i]
-      console.log "user saved : " + listUsers[i]
-      ++i
+    if myformat is "json"
+      myJSON = JSON.stringify({users: arrayToSave})
+      wstream.write myJSON
+    else
+      i = 0
+      while i < arrayToSave.length
+        stringifier.write arrayToSave[i]
+        i++
 
-    toString.end()
+      stringifier.end()
+
     wstream.end()

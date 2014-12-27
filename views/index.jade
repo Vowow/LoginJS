@@ -13,8 +13,13 @@ html
     script
       :coffee
         $().ready ->
+          $("#signupForm").hide();
           console.log 'ready'
           $(".jumbotron").hide();
+          $('#signup').click ->
+            $("#login").hide();
+            $("#signup").hide();
+            $("#signupForm").show();
           $('#login').submit (e) ->
             user =
               username: $('#login-username').val()
@@ -23,8 +28,9 @@ html
             e.preventDefault()
             $.post "/login", user, (data) ->
               console.log 'data', data
-              if data.username is user.username and data.password is user.password or data.email is user.username and data.password is user.password 
+              if data.username is user.username and data.password is user.password or data.email is user.username and data.password is user.password
                 $("#login").hide();
+                $("#signup").hide();
                 $(".jumbotron").show();
                 $(".alert").hide();
               else
@@ -32,19 +38,23 @@ html
 
             , 'json'
 
-            $("exportCSV").click ->
-              $.post "/export"
-              console.log 'inside'
-
+            $.post "/signup", user, (data) ->
+                $("#login").hide();
+                $("#signup").show();
   body
   include header.jade
   div.container
   div.alert.alert-danger(style="display:none")
     a.close(href='#', data-dismiss='alert')
     strong Warning!
-    | Le couple email/mot de passe ou usename/mot de passe est incorrecte
+    | Le couple email/mot de passe ou username/mot de passe est incorrecte
 
   .container
+  - if (typeof(username) != 'undefined'){
+  p popopo
+  script(type='text/javascript').
+    $("#login").hide();
+  -}
     form#login(action="/login", method="post", role="form")
      h2.form-signin-heading Please sign in
      input.input-block-level.form-control(id="login-username",type="text", name="username", placeholder="Username", required, pattern="{3,32}")
@@ -52,15 +62,32 @@ html
      input.input-block-level.form-control(id="login-password",type="password", name="password", placeholder="Password", required, pattern="{3}")
      br
      button.btn.btn-lg.btn-primary.btn-block(type="submit") Sign in
-
+     br
+     button.btn.btn-lg.btn-primary.btn-block(type="submit", class="signup", id="signup") Sign up
+  .container
+    form#signupForm(action="/signup", method="post", role="form")
+     h2.form-signupForm-heading No account yet ? Please Sign up
+     input.input-block-level.form-control(id="signup-username",type="text", name="username", placeholder="Username", required, pattern="{3,32}")
+     br
+     input.input-block-level.form-control(id="signup-email",type="text", name="email", placeholder="Email", required, pattern="{3,32}")
+     br
+     input.input-block-level.form-control(id="signup-password",type="password", name="password", placeholder="Password", required, pattern="{3}")
+     br
+     input.input-block-level.form-control(id="signup-password-re",type="password", name="password-re", placeholder="Confirm password", required, pattern="{3}")
+     br
+     input.input-block-level.form-control(id="signup-password-re",type="text", name="lastname", placeholder="Lastname", required, pattern="{3}")
+     br
+     input.input-block-level.form-control(id="signup-password-re",type="text", name="firstname", placeholder="Firstname", required, pattern="{3}")
+     br
+     button.btn.btn-lg.btn-primary.btn-block(type="submit") Sign up
 
 
 
 div.container
   div.jumbotron(style="display:none")
-   h1 Hello !
+   h1 Hello #{username}!
      p Welcome, to our application
      br
-    form#export(action="/export", method="post") 
-    button.btn.btn-lg.btn-primary(id="exportCSV" type="submit") Export BDD
+    form#export(action="/logout", method="post")
+    button.btn.btn-lg.btn-primary(id="logout" type="submit") Logout
 include footer.jade
