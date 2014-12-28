@@ -10,7 +10,6 @@ mydb = require "../lib/db.coffee"
 format =""
 module.exports = (newUser, format) ->
   mydb = newUser
-  myformat = format if format
 
   source.on "error", ->
     console.log "ERROR :" + error.message
